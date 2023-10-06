@@ -20,7 +20,7 @@ const errorHandler = (err, req, res, next) => {
   res.status(statusCode);
   // return error message
   res.json({
-    message: err.message,
+    message: message,
     // only show stack trace in development
     stack: process.env.NODE_ENV === "production" ? null : err.stack,
   });

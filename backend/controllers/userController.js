@@ -14,7 +14,7 @@ const authUser = asyncHandler(async (req, res) => {
     // If user exists and password matches
     generateToken(res, user._id); // Generate JWT and set as cookie
 
-    res.json({
+    res.status(200).json({
       _id: user._id,
       name: user.name,
       email: user.email,
@@ -77,14 +77,52 @@ const logoutUser = asyncHandler(async (req, res) => {
 // @route   GET /api/users/profile
 // @access  Private
 const getUserProfile = asyncHandler(async (req, res) => {
-  res.send("get user profile");
+  const user = await User.findById(req.user._id); // Find user by ID
+
+  if (user) {
+    res.status(200).json({
+      // Send user data
+      _id: user._id,
+      name: user.name,
+      email: user.email,
+      isAdmin: user.isAdmin,
+    });
+  } else {
+    res.status(404); // Not found
+    throw new Error("User not found");
+  }
 });
 
 // @desc    Update user profile
 // @route   PUT /api/users/profile
 // @access  Private
 const updateUserProfile = asyncHandler(async (req, res) => {
-  res.send("update user profile");
+  const user = await User.findById(req.user._id); // Find user by ID
+
+  if (user) {
+    user.name = req.body.name || user.name; // Update user name
+    user.email = req.body.email || user.email; // Update user email
+
+    if (req.body.password) {
+      // If password is updated
+      user.password = req.body.password; // Update user password
+    }
+
+    const updatedUser = await user.save(); // Save updated user
+
+    // generateToken(res, updatedUser._id); // Generate JWT and set as cookie
+
+    res.status(200).json({
+      // Send updated user data
+      _id: updatedUser._id,
+      name: updatedUser.name,
+      email: updatedUser.email,
+      isAdmin: updatedUser.isAdmin,
+    });
+  } else {
+    res.status(404); // Not found
+    throw new Error("User not found");
+  }
 });
 
 // @desc    Get users

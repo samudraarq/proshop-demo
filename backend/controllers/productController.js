@@ -5,9 +5,19 @@ import Product from "../models/productModel.js";
 // @route   GET /api/products
 // @access  Public
 const getProducts = asyncHandler(async (req, res) => {
-  const products = await Product.find({});
+  const pageSize = 4;
+  const page = Number(req.query.pageNumber) || 1;
+  const count = await Product.countDocuments();
+
+  const products = await Product.find({})
+    .limit(pageSize)
+    .skip(pageSize * (page - 1));
   // throw new Error("Some error");
-  res.json(products);
+  res.json({
+    products,
+    page,
+    pages: Math.ceil(count / pageSize),
+  });
 });
 
 // @desc    Fetch a product by id

@@ -102,14 +102,14 @@ const OrderScreen = () => {
       refetch();
       toast.success("Order delivered");
     } catch (error) {
-      toast.error(error?.data?.message || error.message);
+      toast.error(error?.data?.message || error.error);
     }
   };
 
   return isLoading ? (
     <Loader />
   ) : error ? (
-    <Message variant="danger">{error.message}</Message>
+    <Message variant="danger">{error?.data?.message || error.error}</Message>
   ) : (
     <>
       <h1>Order {order._id}</h1>

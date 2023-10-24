@@ -34,12 +34,18 @@ const upload = multer({
   storage,
   fileFilter,
 });
+const uploadSingleImage = upload.single("image");
 
-router.post("/", upload.single("image"), (req, res) => {
-  // upload.single("image") = single image upload
-  res.send({
-    message: "Image uploaded",
-    image: `/${req.file.path}`,
+router.post("/", (req, res) => {
+  uploadSingleImage(req, res, (err) => {
+    if (err) {
+      res.status(400).send({ message: err.message });
+    } else {
+      res.status(200).send({
+        image: `/${req.file.path}`,
+        message: "Image uploaded",
+      });
+    }
   });
 });
 
